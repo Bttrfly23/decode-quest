@@ -1,26 +1,164 @@
 @import "tailwindcss";
 
+/* ── DecodeQuest Theme ── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafaf9;
+  --foreground: #1c1917;
+  --primary: #6366f1;
+  --primary-light: #a5b4fc;
+  --primary-dark: #4338ca;
+  --success: #22c55e;
+  --success-light: #bbf7d0;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --surface: #ffffff;
+  --surface-hover: #f5f5f4;
+  --border: #e7e5e4;
+  --text-muted: #78716c;
+  --accent: #8b5cf6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* High Contrast Mode */
+.high-contrast {
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #818cf8;
+  --primary-light: #c7d2fe;
+  --primary-dark: #6366f1;
+  --surface: #1a1a1a;
+  --surface-hover: #2a2a2a;
+  --border: #444444;
+  --text-muted: #a0a0a0;
 }
+
+/* ── Typography ── */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.font-opendyslexic {
+  font-family: 'OpenDyslexic', sans-serif;
+}
+
+body.font-system {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Font size presets */
+body.font-size-small { font-size: 14px; }
+body.font-size-medium { font-size: 16px; }
+body.font-size-large { font-size: 18px; }
+body.font-size-xlarge { font-size: 20px; }
+
+/* Letter spacing presets */
+body.spacing-normal { letter-spacing: 0; }
+body.spacing-wide { letter-spacing: 0.025em; }
+body.spacing-wider { letter-spacing: 0.05em; }
+
+/* Line height presets */
+body.line-normal { line-height: 1.5; }
+body.line-relaxed { line-height: 1.75; }
+body.line-loose { line-height: 2; }
+
+/* ── Reduced Motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ── Utilities ── */
+
+.no-justify {
+  text-align: left !important;
+}
+
+/* Game tile button styles */
+.game-tile {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.game-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.game-tile:active {
+  transform: translateY(0);
+}
+
+/* Progress bar animation */
+.progress-fill {
+  transition: width 0.5s ease;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Phoneme tile */
+.phoneme-tile {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.phoneme-tile:hover {
+  transform: scale(1.05);
+}
+
+.phoneme-tile.selected {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Syllable break marker */
+.syllable-break {
+  cursor: pointer;
+  width: 4px;
+  min-height: 2.5rem;
+  transition: background-color 0.15s ease;
+}
+
+.syllable-break:hover {
+  background-color: var(--primary-light);
+}
+
+.syllable-break.active {
+  background-color: var(--primary);
 }

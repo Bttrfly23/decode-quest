@@ -1,0 +1,52 @@
+{
+  "learner": {
+    "age": 13,
+    "diagnoses": ["Dyslexia", "Dysgraphia", "ADHD_Inattentive"],
+    "notes": [
+      "Decoding and single-word reading are slow, effortful, and inaccurate.",
+      "Common error pattern: phoneme omissions and additions.",
+      "Guesses words based on visual features.",
+      "Orthographic pattern knowledge is weak.",
+      "Reading fluency is underdeveloped."
+    ]
+  },
+  "assessment_summary": {
+    "basic_reading_skills": "Low Average",
+    "reading_fluency": "Low Average",
+    "spelling": "Low",
+    "oral_language": "High",
+    "working_memory": "Strong",
+    "processing_speed": "Variable"
+  },
+  "instructional_priorities": {
+    "top_targets": [
+      "phoneme-grapheme accuracy",
+      "blending digraphs and vowel teams",
+      "multisyllabic decoding",
+      "orthographic pattern recognition",
+      "morphemic awareness"
+    ],
+    "reduce": [
+      "timed pressure",
+      "visual clutter"
+    ]
+  },
+  "recommended_settings": {
+    "session_minutes": 6,
+    "audio_instructions_default": true,
+    "timers_default": false,
+    "reduced_motion_default": true,
+    "extended_hint_ladder": true
+  },
+  "skill_weighting": {
+    "sound_snap": 0.30,
+    "blend_builder": 0.35,
+    "syllable_sprint": 0.20,
+    "morpheme_match": 0.15
+  },
+  "error_focus": {
+    "omission_errors": true,
+    "addition_errors": true,
+    "visual_guessing": true
+  }
+}

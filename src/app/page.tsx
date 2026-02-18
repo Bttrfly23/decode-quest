@@ -1,65 +1,133 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useRouter } from 'next/navigation';
+import { useApp } from '@/components/AppProvider';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { gameDisplayNames, gameIcons, getRandomMessage } from '@/lib/content/messages';
+import { GameType } from '@/lib/content/types';
+
+export default function HomePage() {
+  const router = useRouter();
+  const { profile, progress, settings, updateSettings } = useApp();
+
+  const lastSession = progress.sessionHistory[progress.sessionHistory.length - 1];
+  const totalMastery = progress.skillMasteries.length > 0
+    ? Math.round(progress.skillMasteries.reduce((s, m) => s + m.mastery, 0) / progress.skillMasteries.length)
+    : 0;
+
+  const handleStartMission = () => {
+    router.push('/games/mission');
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="max-w-lg mx-auto px-4 pt-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">DecodeQuest</h1>
+          <p className="text-sm text-text-muted">Build your decoding skills</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => updateSettings({ audioInstructions: !settings.audioInstructions })}
+            className="text-xl p-2 rounded-lg hover:bg-surface-hover"
+            aria-label={settings.audioInstructions ? 'Mute audio' : 'Enable audio'}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {settings.audioInstructions ? '🔊' : '🔇'}
+          </button>
         </div>
-      </main>
+      </div>
+
+      {/* Streak + XP */}
+      <div className="flex gap-3 mb-6">
+        <div className="flex-1 bg-surface border border-border rounded-xl p-3 text-center">
+          <div className="text-2xl font-bold text-primary">{progress.totalXP}</div>
+          <div className="text-xs text-text-muted">Total XP</div>
+        </div>
+        <div className="flex-1 bg-surface border border-border rounded-xl p-3 text-center">
+          <div className="text-2xl font-bold text-accent">{progress.currentStreak}</div>
+          <div className="text-xs text-text-muted">Day Streak</div>
+        </div>
+        <div className="flex-1 bg-surface border border-border rounded-xl p-3 text-center">
+          <div className="text-2xl font-bold text-success">{totalMastery}%</div>
+          <div className="text-xs text-text-muted">Avg Mastery</div>
+        </div>
+      </div>
+
+      {/* Today's Mission CTA */}
+      <button
+        onClick={handleStartMission}
+        className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-xl
+          hover:bg-primary-dark transition-colors shadow-lg mb-6 game-tile"
+      >
+        Start Today&apos;s Mission
+        <span className="block text-sm font-normal opacity-80 mt-1">
+          ~{settings.sessionMinutes} min session
+        </span>
+      </button>
+
+      {/* Quick play buttons */}
+      <div className="mb-6">
+        <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-3">
+          Quick Play
+        </h2>
+        <div className="grid grid-cols-2 gap-3">
+          {(['sound_snap', 'blend_builder', 'syllable_sprint', 'morpheme_match'] as GameType[]).map(game => {
+            const gp = progress.gameProgress[game];
+            return (
+              <button
+                key={game}
+                onClick={() => router.push(`/games/${game.replace(/_/g, '-')}`)}
+                className="bg-surface border border-border rounded-xl p-4 text-left
+                  hover:border-primary transition-colors game-tile"
+              >
+                <div className="text-2xl mb-1">{gameIcons[game]}</div>
+                <div className="font-semibold text-sm">{gameDisplayNames[game]}</div>
+                <ProgressBar value={gp.recentAccuracy} size="sm" color="primary" />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Last session recap */}
+      {lastSession && (
+        <div className="bg-surface border border-border rounded-xl p-4 mb-6">
+          <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-2">
+            Last Session
+          </h2>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm">
+              {lastSession.correctItems}/{lastSession.totalItems} correct
+            </span>
+            <span className="text-sm font-medium text-accent">+{lastSession.xpEarned} XP</span>
+          </div>
+          <ProgressBar
+            value={lastSession.totalItems > 0
+              ? Math.round((lastSession.correctItems / lastSession.totalItems) * 100)
+              : 0}
+            size="sm"
+            color="success"
+          />
+          {lastSession.nextFocus.length > 0 && (
+            <p className="text-xs text-text-muted mt-2">
+              Next focus: {lastSession.nextFocus.join(', ')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Confidence message */}
+      <div className="text-center text-sm text-text-muted py-4">
+        {getRandomMessage(progress.currentStreak > 0 ? 'streak' : 'encouragement')}
+      </div>
+
+      {/* Profile indicator */}
+      {profile && (
+        <div className="text-center text-xs text-text-muted/50 pb-4">
+          Personalized for your learning profile
+        </div>
+      )}
     </div>
   );
 }
