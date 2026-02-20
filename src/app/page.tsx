@@ -5,6 +5,7 @@ import { useApp } from '@/components/AppProvider';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { gameDisplayNames, gameIcons, getRandomMessage } from '@/lib/content/messages';
 import { GameType } from '@/lib/content/types';
+import { initAudio } from '@/lib/audio';
 
 export default function HomePage() {
   const router = useRouter();
@@ -15,8 +16,14 @@ export default function HomePage() {
     ? Math.round(progress.skillMasteries.reduce((s, m) => s + m.mastery, 0) / progress.skillMasteries.length)
     : 0;
 
-  const handleStartMission = () => {
+  const handleStartMission = async () => {
+    await initAudio();
     router.push('/games/mission');
+  };
+
+  const handleQuickPlay = async (game: GameType) => {
+    await initAudio();
+    router.push(`/games/${game.replace(/_/g, '-')}`);
   };
 
   return (
@@ -77,7 +84,7 @@ export default function HomePage() {
             return (
               <button
                 key={game}
-                onClick={() => router.push(`/games/${game.replace(/_/g, '-')}`)}
+                onClick={() => handleQuickPlay(game)}
                 className="bg-surface border border-border rounded-xl p-4 text-left
                   hover:border-primary transition-colors game-tile"
               >
